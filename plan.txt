@@ -1,0 +1,89 @@
+What it looks like:
+https://minesweeper.online/img/homepage/expert.png
+
+
+// Variables:
+score
+timer
+
+
+// Constants:
+bombs
+
+
+// What do?
+
+//Initialise
+1. place a bunch of bombs on the board using random coords (these will have a value of -1)
+2. for each square on the board, tally up the negative sum of all adjacent squares
+3. multiply that by -1 to get a positive number, and set that square's value to this number
+
+upon clicking;
+1. check if it's a bomb (if it is, game over)
+    if not a bomb (-1); display the value of the square (reveal square)
+2. if value = 0 (empty square):
+    reveal values of all adjacent squares
+    if an adjacent square is empty:
+        return coords of empty square
+        do the same checkAdjacent function on these new coords
+
+// So;
+
+1. return value of grid square clicked on
+2. if (x !== -1);
+    checkAdjacent (return the coords of values conatining 0, and also reveal them too)
+3. (Since I'll mark bombs using -1, just add value of surrounding squares (if negative) and then multiply that by -1)
+4. set grid value to the new (positive value) tally total, this way it wont interfere with the bomb counting
+5. if square = 0, perfom the checkAdjacent function on the surrounding empty squares, using their coords returned earlier
+
+
+(Extra):
+click event should just display the value of the square, but by default will need to have them hidden
+
+
+// Directions:
+    N: [0, -1],
+    NE: [1, -1],
+    E: [1, 0],
+    SE: [1, 1],
+    S: [0, 1],
+    SW: [-1, 1],
+    W: [-1, 0],
+    NW: [-1, -1],
+
+put these directions into an array:
+then use an object like...
+
+const directions = {
+    N: 0,
+    NE: 1,
+    E: 2,
+    SE: 3,
+    S: 4,
+    SW: 5,
+    W: 6,
+    NW: 7,
+  }
+
+for(let i = 0; i< 8; i++) {
+    directions[i][0] = rowOffset;
+    directions[i][1] = colOffset;
+}
+
+
+// function countAdjacent(colIdx, rowIdx, colOffset, rowOffset) {
+//   const coord = board[colIdx][rowIdx];
+//   let count = 0;
+//   colIdx += colOffset;
+//   rowIdx += rowOffset;
+//   while (
+//     board[colIdx] !== undefined &&
+//     board[colIdx][rowIdx] !== undefined &&
+//     board[colIdx][rowIdx] === player
+//   ) {
+//     count++;
+//     colIdx += colOffset;
+//     rowIdx += rowOffset;
+//   }
+//   return count;
+// }
