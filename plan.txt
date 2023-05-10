@@ -1,4 +1,4 @@
-What it looks like:
+What it looks like (wireframe):
 https://minesweeper.online/img/homepage/expert.png
 
 
@@ -36,10 +36,12 @@ upon clicking;
 4. set grid value to the new (positive value) tally total, this way it wont interfere with the bomb counting
 5. if square = 0, perfom the checkAdjacent function on the surrounding empty squares, using their coords returned earlier
 
-
+on right click change cell class
 (Extra):
 click event should just display the value of the square, but by default will need to have them hidden
 
+
+// to reveal: cellEl.innerText = `${cellVal}`
 
 // Directions:
     N: [0, -1],
@@ -65,11 +67,12 @@ const directions = {
     NW: 7,
   }
 
+Cannot hit a bomb on first click, change value 0 and check adjacent + update value depending on surrounding
+
 for(let i = 0; i< 8; i++) {
     directions[i][0] = rowOffset;
     directions[i][1] = colOffset;
 }
-
 
 // function countAdjacent(colIdx, rowIdx, colOffset, rowOffset) {
 //   const coord = board[colIdx][rowIdx];

@@ -1,0 +1,98 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    height: 90vh;
+    margin: 0;
+    font-family: 'TF2 Build', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-clr);
+    transform: scale(0.95);
+  }
+  
+  :root {
+    --red: #B8383B;
+    --blue: #5885A2;
+    /* --bg-clr: rgb(43, 39, 37); */
+    --bg-clr: rgb(0, 0, 0);
+    /* --main-clr: rgb(235, 228, 201); */
+    --main-clr: rgb(255, 255, 255);
+    /* --sub-clr: rgb(192, 186, 173); */
+    --sub-clr: rgb(100, 100, 100);
+    --btn-clr: rgb(98, 88, 76);
+    --btn-hover: rgb(120, 55, 39);
+    --H: rgb(120, 55, 39);
+  }
+  
+  header {
+    padding-top: 15vh;
+    font-size: 8vmin;
+    color: var(--main-clr);
+    letter-spacing: 0.35vmin;
+  }
+  
+  h1 {
+    color: var(--sub-clr);
+    font-size: 4vmin;
+  }
+  
+  #board {
+    display: grid;
+    margin-top: 2vmin;
+  }
+  
+  #board > div {
+    display: flex;
+    border-radius: 0%;
+    border: 1px solid var(--sub-clr);
+    /* font-size: 12vmin%; */
+    justify-content: center;
+    align-items: center;
+    /* color: red; */
+    
+  }
+  /* #board > #c0r0, #board >  #c1r0, #board >   #c2r0 {
+    border-bottom: 1vmin solid rgb(43, 39, 37);
+  }
+  #board > #c0r2, #board >  #c1r2, #board >   #c2r2 {
+    border-top: 1vmin solid rgb(43, 39, 37);
+  }
+  #board > #c0r0, #board >  #c0r1, #board >   #c0r2 {
+    border-left: 1vmin solid rgb(43, 39, 37);
+  }
+  #board > #c2r0, #board >  #c2r1, #board >   #c2r2 {
+    border-right: 1vmin solid rgb(43, 39, 37);
+  } */
+  
+  box {
+    display: grid;
+    height: 30vmin;
+    width:30vmin;
+    border: 0.4vmin solid red;
+    overflow: visible;
+    margin-top: 2vmin;
+  }
+  
+  button {
+    margin-top: 4vmin;
+    padding: 2vmin;
+    font-size: 2vmin;
+    border-radius: 1vmin;
+    border: 0.1vmin solid var(--btn-clr);
+    color: var(--sub-clr);
+    background-color: var(--main-clr);
+    transition: all 75ms ease-in;
+    font-family: 'TF2 Build', sans-serif;
+  }
+  
+  button:hover {
+    color: var(--bg-clr);
+    background-color: var(--sub-clr);
+    border: 0.1vmin solid var(--sub-clr);
+    transition: all 75ms ease-in;
+    cursor: pointer;
+  }
