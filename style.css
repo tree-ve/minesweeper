@@ -16,6 +16,7 @@
   
   :root {
     --red: #B8383B;
+    /* --B: red; */
     --blue: #5885A2;
     /* --bg-clr: rgb(43, 39, 37); */
     --bg-clr: rgb(0, 0, 0);
@@ -49,6 +50,7 @@
     display: flex;
     border-radius: 0%;
     border: 1px solid var(--sub-clr);
+    /* background-color: var(--main-clr); */
     /* font-size: 12vmin%; */
     justify-content: center;
     align-items: center;
@@ -95,4 +97,16 @@
     border: 0.1vmin solid var(--sub-clr);
     transition: all 75ms ease-in;
     cursor: pointer;
+  }
+
+  .hidden {
+    /* visibility: hidden; */
+    /* color: lightgray; */
+    background-color: lightgray;
+  }
+
+  .revealed {
+    visibility: visible;
+    color: red;
+    background-color: wheat;
   }
