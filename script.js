@@ -81,7 +81,6 @@ function start() {
     boardEls = [...document.querySelectorAll('#board > div')];
 }
 
-
 function init() {
     board = [];
     gameStart = true;
@@ -97,35 +96,12 @@ function init() {
     winner = null;
     document.getElementById('board').addEventListener('click', boardPress);
     placeMines(numMines);
-    countBoardMines();
+    boardAdjacentCount();
     const startTime = Date.now();
     let timeNow = Date.now();
     let boardEls = [...document.querySelectorAll('#board > div')];
     startTimer();
     render();
-}
-
-function startTimer() {
-    const timerId = setInterval(function() {
-        if (gameStart === true) {
-            console.log('game not started');
-            timeNow = 0;
-            startTime = 0;
-        } else if (gameStart === false) {
-            console.log('game has now started');
-            timeNow = Date.now();
-        }
-        timer = timeNow - startTime;
-        timer = timer / 1000;
-        timer = Math.round(timer);
-        timer = timer.toString();
-        while (timer.length < 3) timer = "0" + timer;
-        if (gameEnd === true) {
-            timer = 0;
-            return;
-        }
-        render();
-    }, 1000);
 }
 function gameRunning() {
     if (gameStart === false && gameEnd === false) {
@@ -136,8 +112,6 @@ function gameRunning() {
         return false;
     }
 }
-
-
 function makeBoard(a, b) {
     while (boardEdit.firstChild) {
         boardEdit.removeChild(boardEdit.firstChild);
@@ -158,7 +132,6 @@ function makeBoard(a, b) {
     }
     return board;
 }
-
 function placeMines(num) {
     for (let i = 0; i < num; i++) {
         const rndX = Math.floor(Math.random() * gridCol);
@@ -175,16 +148,13 @@ function placeMines(num) {
         }
     }
 }
-
 function boardPress(evt) {
     if (gameStart === true) {
         timeNow = Date.now();
         startTime = Date.now();
     }
-    console.log(evt.target);
     let idx = boardEls.indexOf(evt.target);
     let rowIdx = (parseInt(idx/gridCol)); // maybe const
-    console.log(idx);
     if (idx === -1) return;
     while (idx > gAVCol) {
         idx = idx - gridCol;
@@ -194,7 +164,7 @@ function boardPress(evt) {
         if (gameStart === true) {
             board[rowIdx][colIdx] = countAdjacent(colIdx, rowIdx);
             placeMines(1);
-            countBoardMines();
+            boardAdjacentCount();
             gameStart = false;
             boardPress(evt);
         } else {
@@ -226,21 +196,47 @@ function boardPress(evt) {
         render();
     } else {
         setRevealed(rowIdx, colIdx);
-        revealAdj(rowIdx,colIdx);
+        checkAdjacent(rowIdx,colIdx);
         bounce = 0;
         gameStart = false;
         render();
     }
 }
-
-function countAdjacent(colIdx, rowIdx) {
-    let coords = board[rowIdx][colIdx];
-    if (gameStart === false) {
-        if (coords === 0) {
-            setRevealed(rowIdx, colIdx);
-        } else {
+function startTimer() {
+    const timerId = setInterval(function() {
+        if (gameStart === true) {
+            // console.log('game not started');
+            timeNow = 0;
+            startTime = 0;
+        } else if (gameStart === false) {
+            // console.log('game has now started');
+            timeNow = Date.now();
+        }
+        timer = timeNow - startTime;
+        timer = timer / 1000;
+        timer = Math.round(timer);
+        timer = timer.toString();
+        while (timer.length < 3) timer = "0" + timer;
+        if (gameEnd === true) {
+            timer = 0;
+            return;
+        }
+        render();
+    }, 1000);
+}
+function boardAdjacentCount() {
+    let mineNum = 0
+    for (let a = 0; a < gridCol; a++) {
+        for(let b = 0; b < gridRow; b++) {
+            if (board[b][a] === -1) {
+                continue;
+            }
+            countAdjacent(a,b);
         }
     }
+    render();
+}
+function countAdjacent(colIdx, rowIdx) {
     let count = 0;
     for(let i = 0; i < 8; i++) {
         let colOffset = directions[i][0];
@@ -264,6 +260,7 @@ function countAdjacent(colIdx, rowIdx) {
     return count;
 }
 
+// * Validation functions start
 function checkZero(row, col) {
     if ((row < gridRow && row >= 0) && (col < gridCol && col >= 0)) {
         if (board[row][col] === 0) {
@@ -282,7 +279,6 @@ function checkNotMine(row, col) {
         }
     }
 }
-
 function checkRevealed(row,col) {
     const cell = document.getElementById(`r${col}c${row}`)
     let revealed = cell.getAttribute('class');
@@ -292,7 +288,6 @@ function checkRevealed(row,col) {
         return false;
     }
 }
-
 function withinBounds(row, col) {
     if ((row < gridRow && row >= 0) && (col < gridCol && col >= 0)) {
         return true;
@@ -300,51 +295,52 @@ function withinBounds(row, col) {
         return false;
     }
 }
+// * Validation functions end
 
-function setRevealed(row, col) {
-    const cellClick = document.getElementById(`r${col}c${row}`)
-
-    cellClick.setAttribute('class', 'revealed');
-}
-
+// * Reveal functions start
 function checkAdjacent(row, col) {
-    largeRevealArray = [];
     zeroArray = [];
     notMineArray = [];
-    if (withinBounds(row, col)) {
-        if (checkZero(row,col) === true) {
-            for(let k = 0; k < 8; k++) {
-                let colOffset = directions[k][0];
-                let rowOffset = directions[k][1];
-                if (withinBounds(row, col) && checkZero(row, col) === true && checkRevealed(row,col) === false && zeroArray.includes([row,col]) === true) {
-                    zeroArray.push([row,col]);
+    if (withinBounds(row, col) && checkZero(row,col)) {
+        for(let k = 0; k < 8; k++) {
+            let colOffset = directions[k][0];
+            let rowOffset = directions[k][1];
+            let colCheck = col + colOffset;
+            let rowCheck = row + rowOffset;
+            if (withinBounds(rowCheck, colCheck)) {
+                if (checkZero(rowCheck, colCheck) === true && !checkRevealed(rowCheck,colCheck)) {
+                    zeroArray.push([rowCheck,colCheck]);
                 }
-                let colCheck = col + colOffset;
-                let rowCheck = row + rowOffset;
-                if (withinBounds(rowCheck, colCheck)) {
-                    if (checkZero(rowCheck, colCheck) === true && checkRevealed(rowCheck,colCheck) === false) {
-                        zeroArray.push([rowCheck,colCheck]);
-                    }
-                    if (checkNotMine(rowCheck, colCheck) && checkRevealed(rowCheck,colCheck) === false) {
-                        notMineArray.push([rowCheck,colCheck]);
-                    }
+                if (checkNotMine(rowCheck, colCheck) && !checkRevealed(rowCheck,colCheck)) {
+                    notMineArray.push([rowCheck,colCheck]);
                 }
             }
         }
     }
-    zeroSearch(zeroArray);
-    for (let t = 0; t < zeroArray.length; t++) {
-        row = zeroArray[t][0];
-        col = zeroArray[t][1];
-    }
-    for (let s = 0; s < notMineArray.length; s++) {
-        row = notMineArray[s][0];
-        col = notMineArray[s][1];
-        setRevealed(row,col);
+    arraySearch(zeroArray);
+    arraySearch(notMineArray);
+}
+function revealAdj(row, col) {
+    zeroArray = [];
+    notMineArray = [];
+    if (withinBounds(row,col) && checkZero(row,col) && checkRevealed(row,col)) {
+        for(let k = 0; k < 8; k++) {
+            let colOffset = directions[k][0];
+            let rowOffset = directions[k][1];
+            let colCheck = col + colOffset;
+            let rowCheck = row + rowOffset;
+            if (withinBounds(rowCheck, colCheck)) {
+                setRevealed(rowCheck, colCheck);
+                checkAdjacent(rowCheck,colCheck);
+            }
+        }
     }
 }
-
-function zeroSearch(arr) {
+function setRevealed(row, col) {
+    const cellClick = document.getElementById(`r${col}c${row}`)
+    cellClick.setAttribute('class', 'revealed');
+}
+function arraySearch(arr) {
     for (let i = 0; i < arr.length; i++) {
         let row = arr[i][0];
         let col = arr[i][1];
@@ -352,38 +348,7 @@ function zeroSearch(arr) {
         revealAdj(row,col);
     }
 }
-
-function revealAdj(row, col) {
-    zeroArray = [];
-    if ((row < gridRow && row >= 0) && (col < gridCol && col >= 0)) {
-        if (checkZero(row,col) === true) {
-            for(let k = 0; k < 8; k++) {
-                let colOffset = directions[k][0];
-                let rowOffset = directions[k][1];
-                let colCheck = col + colOffset;
-                let rowCheck = row + rowOffset;
-                if (withinBounds(rowCheck, colCheck)) {
-                    setRevealed(rowCheck, colCheck);
-                    checkAdjacent(rowCheck,colCheck);
-                }
-            }
-        } else {
-        }
-    }
-}
-
-function countBoardMines() {
-    let mineNum = 0
-    for (let a = 0; a < gridCol; a++) {
-        for(let b = 0; b < gridRow; b++) {
-            if (board[b][a] === -1) {
-                continue;
-            }
-            countAdjacent(a,b);
-        }
-    }
-    render();
-}
+// * Reveal functions end
 
 // * Render functions start
 function render() {
