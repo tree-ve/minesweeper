@@ -8,7 +8,7 @@
     /* font-family: 'TF2 Build', sans-serif; */
     /* font-family: 'VT323', sans-serif; */
     /* font-family: 'DotGothic16', sans-serif; */
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Press Start 2P', sans-serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -27,6 +27,7 @@
     /* --main-clr: rgb(235, 228, 201); */
     --main-clr: rgb(189,189,189);
     /* --sub-clr: rgb(192, 186, 173); */
+    --hidden: rgb(180,180,180);
     --sub-clr: rgb(123,123,123);
     --btn-clr: rgb(98, 88, 76);
     --btn-hover: rgb(120, 55, 39);
@@ -48,7 +49,14 @@
     letter-spacing: 0.35vmin;
     display: grid;
   }
-  
+
+  subheadings {
+    display: grid;
+    background-color: var(--main-clr);
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: space-around;
+  }
+
   h1 {
     color: var(--sub-clr);
     font-size: 4vmin;
@@ -98,30 +106,31 @@
     margin-top: 4vmin;
     padding: 2vmin;
     font-size: 2vmin;
-    border-radius: 1vmin;
-    border: 0.1vmin solid var(--btn-clr);
+    /* border-radius: 1vmin; */
+    /* border: 0.1vmin solid var(--btn-clr); */
     color: var(--sub-clr);
     background-color: var(--main-clr);
-    transition: all 75ms ease-in;
-    font-family: 'TF2 Build', sans-serif;
+    /* transition: all 75ms ease-in; */
+    /* font-family: 'TF2 Build', sans-serif; */
+    font-family: 'Press Start 2P', cursive;
   }
   
-  button:hover {
-    color: var(--bg-clr);
-    background-color: var(--sub-clr);
+  .hidden:hover {
+    color: var(--hidden);
+    background-color: var(--hidden);
     border: 0.1vmin solid var(--sub-clr);
-    transition: all 75ms ease-in;
+    /* transition: all 75ms ease-in; */
     cursor: pointer;
   }
 
   .hidden {
     /* visibility: hidden; */
-    color: var(--main-clr);
-    background-color: var(--main-clr);
+    color: var(--hidden);
+    background-color: var(--hidden);
   }
 
   .revealed {
     visibility: visible;
     /* color: red; */
-    background-color: wheat;
+    background-color: var(--main-clr);
   }

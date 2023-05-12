@@ -44,7 +44,7 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 50;
+const numMines = 99;
 
 //*----- state variables -----*/
 let board = [];
@@ -70,6 +70,8 @@ const playAgainBtn = document.querySelector('button');
 const boardEdit = document.getElementById('board');
 init();
 let boardEls = [...document.querySelectorAll('#board > div')];
+// let boardEls = [...document.querySelectorAll('#board > button')];
+const gameOver = document.getElementById('gameOver');
 boardEdit.style.fontSize = `${60 / gridCol}vmin`;
 
 //*----- event listeners -----*/
@@ -79,6 +81,7 @@ playAgainBtn.addEventListener('click', start);
 function start() {
     init();
     boardEls = [...document.querySelectorAll('#board > div')];
+    // boardEls = [...document.querySelectorAll('#board > button')];
 }
 
 function init() {
@@ -100,6 +103,7 @@ function init() {
     const startTime = Date.now();
     let timeNow = Date.now();
     let boardEls = [...document.querySelectorAll('#board > div')];
+    // let boardEls = [...document.querySelectorAll('#board > button')];
     startTimer();
     render();
 }
@@ -125,6 +129,7 @@ function makeBoard(a, b) {
         for(let j = 0; j< b; j++) {
             board[i][j] = 0;
             let newDiv = document.createElement('div');
+            // let newDiv = document.createElement('button');
             newDiv.setAttribute('id', `r${j}c${i}`);
             newDiv.setAttribute('class', 'hidden');
             boardEdit.appendChild(newDiv);
@@ -357,10 +362,10 @@ function render() {
     renderControls();
   }
   
-  function renderSansBoard() {
-    renderMessage();
-    renderControls();
-  }
+//   function renderSansBoard() {
+    // renderMessage();
+    // renderControls();
+//   }
   //
   function renderBoard() {
     board.forEach(function(colArr, colIdx) {
@@ -372,16 +377,21 @@ function render() {
                 cellEl.style.color = `var(--${NUMCOLORS[cellVal]}`;
             }
             if (cellEl.getAttribute('class') === 'hidden') {
-                cellEl.style.color = `var(--${NUMCOLORS[cellVal]}`;
+                cellEl.style.color = `var(--main-clr}`;
+                cellEl.innerText = ``;
+            } else if (cellEl.getAttribute('class') === 'revealed') {
+                cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
             }
             cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
+            renderControls();
+            // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
         });
     });
   }
 
   function renderMessage() {
     if (gameEnd === true) {
-      msgEl.innerHTML = `<span style="color: var(--red})">Game Over!</span>`;
+      msgEl.innerHTML = ` `;//`<span style="color: var(--red})">Game Over!</span>`;
     } else {
       msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
     }
@@ -389,5 +399,14 @@ function render() {
   //
   function renderControls() {
     playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
+    // const gameOver = document.getElementById('gameOver');
+    // console.log(gameOver);
+    if (gameEnd === true) {
+        // gameOver.innerText = `GAME OVER!`;
+      } else {
+        // gameOver.innerText = ``;
+      }
+    // gameOver.innerText = `GAME OVER!`;
+
   }
   // * Render functions end

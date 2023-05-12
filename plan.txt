@@ -97,3 +97,10 @@ only then does it start looking at the cells around it
 
 
 
+// weekend plans:
+1. add right click function
+2. investigate div stylings when set to hidden
+3. sort out render controls
+4. all the styling
+5. prevent clicks after a game over
+6. Winner function
