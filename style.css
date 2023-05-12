@@ -5,7 +5,10 @@
   body {
     height: 90vh;
     margin: 0;
-    font-family: 'TF2 Build', sans-serif;
+    /* font-family: 'TF2 Build', sans-serif; */
+    /* font-family: 'VT323', sans-serif; */
+    /* font-family: 'DotGothic16', sans-serif; */
+    font-family: 'Press Start 2P', cursive;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,15 +18,16 @@
   }
   
   :root {
-    --red: #B8383B;
+    /* --red: #B8383B; */
+    --red: rgb(255,0,0);
     /* --B: red; */
     --blue: #5885A2;
     /* --bg-clr: rgb(43, 39, 37); */
-    --bg-clr: rgb(0, 0, 0);
+    --bg-clr: rgb(255, 255, 255);
     /* --main-clr: rgb(235, 228, 201); */
-    --main-clr: rgb(255, 255, 255);
+    --main-clr: rgb(189,189,189);
     /* --sub-clr: rgb(192, 186, 173); */
-    --sub-clr: rgb(100, 100, 100);
+    --sub-clr: rgb(123,123,123);
     --btn-clr: rgb(98, 88, 76);
     --btn-hover: rgb(120, 55, 39);
     --H: rgb(120, 55, 39);
@@ -32,6 +36,9 @@
     --three: rgb(255,0,0);
     --four: rgb(0,0,128);
     --five: rgb(128,0,0);
+    --six: rgb(0,128,128);
+    --seven: rgb(0, 0, 0,);
+    --eight: rgb(128,128,128);
   }
   
   header {
@@ -39,11 +46,14 @@
     font-size: 8vmin;
     color: var(--main-clr);
     letter-spacing: 0.35vmin;
+    display: grid;
   }
   
   h1 {
     color: var(--sub-clr);
     font-size: 4vmin;
+    display: inline grid;
+    /* justify-content: start; */
   }
   
   #board {
@@ -106,8 +116,8 @@
 
   .hidden {
     /* visibility: hidden; */
-    color: lightgray;
-    background-color: lightgray;
+    color: var(--main-clr);
+    background-color: var(--main-clr);
   }
 
   .revealed {

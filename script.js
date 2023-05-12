@@ -38,22 +38,13 @@ const NUMCOLORS = {
 // const explosion = new Audio("https://www.101soundboards.com/sounds/421685-explosion-02");
 // explosion.play();
 
-// const grid = 13;
 const gridRow = 16;
 const gridCol = 30;
-// const gridArrayVal = (grid - 1);
 const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-// const startGrid = Math.floor(grid / 2);
-// const startCol = startGrid;
-// const startRow = startGrid;
 const numMines = 50;
-const startTime = 0;
-// console.log(startCol, startRow);
-// COLORS = Object.assign('2', 'X');
-// COLORS.entries(['2', 'X']);
 
 //*----- state variables -----*/
 let board = [];
@@ -61,13 +52,13 @@ let turn;
 let winner;
 let length;
 let score = 0;
-let timer = 0;
-let timeNow = Date.now()
-// let speed = 1000 / (2.5 * (score + 1));
-let lock = false;
+let timer = "000";
+let timeNow = Date.now();
+let startTime = Date.now();
+let gameStart = true;
+let gameEnd = false;
 let xDir = 0;
 let yDir = 0;
-let firstTurn = true;
 let zeroArray = [];
 let notMineArray = [];
 let bounce = 0;
@@ -78,28 +69,27 @@ const msgEl = document.getElementById('timer');
 const playAgainBtn = document.querySelector('button');
 const boardEdit = document.getElementById('board');
 init();
-const boardEls = [...document.querySelectorAll('#board > div')];
+let boardEls = [...document.querySelectorAll('#board > div')];
 boardEdit.style.fontSize = `${60 / gridCol}vmin`;
 
 //*----- event listeners -----*/
-playAgainBtn.addEventListener('click', init);
-// document.addEventListener('keydown', (event) => {
-//     let name = event.key;
-//     // let code = event.code;
-//     direction(name);
-// }, false);
-// console.log(Date.now());
+playAgainBtn.addEventListener('click', start);
 
 //*----- functions -----*/
-
+function start() {
+    init();
+    boardEls = [...document.querySelectorAll('#board > div')];
+}
 
 
 function init() {
     board = [];
-    lock = false;
+    gameStart = true;
+    gameEnd = false;
     xDir = 0;
     yDir = 0;
     score = 0;
+    timer = '000';
     boardEdit.style.gridTemplateColumns = `repeat(${gridCol}, ${120 / gridCol}vmin)`;
     boardEdit.style.gridTemplateRows = `repeat(${gridRow}, ${120 / gridCol}vmin)`;
     makeBoard(gridRow, gridCol);
@@ -108,28 +98,43 @@ function init() {
     document.getElementById('board').addEventListener('click', boardPress);
     placeMines(numMines);
     countBoardMines();
-    // if (board[a][b] === 0) {
-    //     boardEdit.style.color = 'blue';
-    // }
-    // boardEdit.style.color = 'blue';
-    // countAdjacent();
-    // boardEls = [...document.querySelectorAll('#board > div')];
-    // boardEdit.style.color = 'transparent';
+    const startTime = Date.now();
+    let timeNow = Date.now();
+    let boardEls = [...document.querySelectorAll('#board > div')];
+    startTimer();
     render();
-    // renderBoard();
 }
 
-function startTimer(startTime) {
+function startTimer() {
     const timerId = setInterval(function() {
-        timeNow = Date.now()
-        // console.log('timeNow; ', timeNow);
-        // console.log('startTime; ', startTime);
+        if (gameStart === true) {
+            console.log('game not started');
+            timeNow = 0;
+            startTime = 0;
+        } else if (gameStart === false) {
+            console.log('game has now started');
+            timeNow = Date.now();
+        }
         timer = timeNow - startTime;
         timer = timer / 1000;
         timer = Math.round(timer);
-        // console.log('Time: ', timer);
-        render()
+        timer = timer.toString();
+        while (timer.length < 3) timer = "0" + timer;
+        if (gameEnd === true) {
+            timer = 0;
+            return;
+        }
+        render();
     }, 1000);
+}
+function gameRunning() {
+    if (gameStart === false && gameEnd === false) {
+        return true;
+    } else if (gameStart === true && gameEnd === false) {
+        return false;
+    } else if (gameStart === false && gameEnd === true) {
+        return false;
+    }
 }
 
 
@@ -151,81 +156,64 @@ function makeBoard(a, b) {
             boardEdit.appendChild(newDiv);
         }
     }
-    // console.table(board);
     return board;
 }
 
-//! Mines not placing on bottom gridRow - gridCol rows
 function placeMines(num) {
-    // board[gAVCol][gAVRow] = -1;
-    // board[gAVCol][0] = -1;
-    // board[0][gAVRow] = -1;
-    // board[0][0] = -1;
-    // console.log(gridCol);
-    // console.log(gridRow);
     for (let i = 0; i < num; i++) {
         const rndX = Math.floor(Math.random() * gridCol);
-        // const rndX = i;
-        
         const rndY = Math.floor(Math.random() * gridRow);
-        // const rndY = i;
-        // console.log(h)
-        // console.log('Y: ', rndY, ' X: ', rndX);
-        // console.log(`board[${rndY}][${rndX}]`);
-        // console.log(board[rndY][rndX]);
         if (board[rndY][rndX] === 0) {
             board[rndY][rndX] = -1;
             if (rndX > gAVCol) {
-                // console.log('rndX: ', rndX);
             }
             if (rndY > gAVRow) {
-                // console.log('rndY: ', rndY);
             }
-            // board[rndX][rndY] = 0;
         } else {
             i--;
             continue;
         }
     }
-    // console.table(board);
 }
 
 function boardPress(evt) {
-    // firstTurn = false;
-    if (firstTurn === true) {
-        const startTime = Date.now();
-        startTimer(startTime);
+    if (gameStart === true) {
+        timeNow = Date.now();
+        startTime = Date.now();
     }
-    console.log(startTime);
-    console.log(firstTurn);
+    console.log(evt.target);
     let idx = boardEls.indexOf(evt.target);
-    const rowIdx = (parseInt(idx/gridCol));
-    // console.log(idx);
-    // console.log('gridRow: ', gridRow);
-    // console.log('rowIdx: ', rowIdx);
-    console.log('click');
+    let rowIdx = (parseInt(idx/gridCol)); // maybe const
+    console.log(idx);
     if (idx === -1) return;
     while (idx > gAVCol) {
         idx = idx - gridCol;
     }
-    const colIdx = idx;
+    let colIdx = idx; // maybe const
     if (board[rowIdx][colIdx] < 0) {
-        // console.log('board val < 0');
-        // console.log('colIdx: ', colIdx);
-        if (firstTurn === true) {
+        if (gameStart === true) {
             board[rowIdx][colIdx] = countAdjacent(colIdx, rowIdx);
             placeMines(1);
             countBoardMines();
-            firstTurn = false;
+            gameStart = false;
             boardPress(evt);
         } else {
-            console.log('mine');
-            console.log('game over');
+            let boardBombs = board.flat();
+            let gameOverBombs = boardBombs.map((n, i) => n === -1 ? i : '').filter(String);
+            for (let x = 0; x < gameOverBombs.length; x++) {
+                idx = gameOverBombs[x];
+                rowIdx = rowIdx = (parseInt(idx/gridCol));
+                while (idx > gAVCol) {
+                    idx = idx - gridCol;
+                }
+                colIdx = idx;
+                setRevealed(rowIdx,colIdx);
+            }
             setRevealed(rowIdx, colIdx);
+            gameEnd = true;
             render();
         }
     } else if (board[rowIdx][colIdx] > 0) {
-        // console.log('board val > 0');
         let idx = boardEls.indexOf(evt.target);
         const rowIdx = (parseInt(idx/gridCol));
         if (idx === -1) return;
@@ -233,34 +221,21 @@ function boardPress(evt) {
             idx = idx - gridCol;
         }
         const colIdx = idx;
-        console.log('exit 1');
         setRevealed(rowIdx, colIdx);
-        firstTurn = false;
+        gameStart = false;
         render();
-        // countAdjacent(colIdx, rowIdx);
     } else {
-        // setRevealed(rowIdx, colIdx);
-        // countAdjacent(colIdx, rowIdx);
-        // const flatBoard = board.flat();
-        // if (winner === null && flatBoard.includes(0) === false) {
-            //     checkTie(flatBoard);
-            // }
-        console.log('exit 3');
         setRevealed(rowIdx, colIdx);
         revealAdj(rowIdx,colIdx);
-        // checkAdjacent(rowIdx,colIdx);
         bounce = 0;
-        // explore(rowIdx,colIdx,bounce);
-        // console.log(board[rowIdx][colIdx]);
-        firstTurn = false;
+        gameStart = false;
         render();
-        // subRender(colIdx, rowIdx);
     }
 }
 
 function countAdjacent(colIdx, rowIdx) {
     let coords = board[rowIdx][colIdx];
-    if (firstTurn === false) {
+    if (gameStart === false) {
         if (coords === 0) {
             setRevealed(rowIdx, colIdx);
         } else {
@@ -328,64 +303,17 @@ function withinBounds(row, col) {
 
 function setRevealed(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
-    // console.log(col,row);
 
     cellClick.setAttribute('class', 'revealed');
-    // console.log('complete');
-    // if (checkZero(row,col) === true) {
-    //     revealAdj(row,col);
-    // }
 }
-// function explode(row, col) {
-//     // largeRevealArray = []
-//     // console.log('explode', x);
-//     for (let x = 0; x < 8; x++) {
-//         let colOffset = directions[x][0];
-//         let rowOffset = directions[x][1];
-//         colCheck = col + colOffset;
-//         rowCheck = row + rowOffset;
-//         // console.log(rowOffset, colOffset);
-//         if (withinBounds(rowCheck, colCheck)) {
-//             while (checkZero(rowCheck,colCheck) || checkNotMine(rowCheck, colCheck)) {
-//                 console.log('loop-di-loop');
-//                 // setRevealed(rowCheck, colCheck);
-//                 if (checkZero(rowCheck,colCheck) === true && checkNotMine(rowCheck,colCheck) === false && checkRevealed(rowCheck,colCheck) === false) {
-//                     // if (checkNotMine(rowCheck,colCheck) === false) {
-//                     //     setRevealed(rowCheck,colCheck);
-//                     // }
-//                     largeRevealArray.push([rowCheck,colCheck]);
-//                 }
-//                 if (checkNotMine(rowCheck,colCheck) === true && checkRevealed(rowCheck,colCheck) === false) {
-//                     // console.log(board[rowCheck][colCheck]);
-//                     // largeRevealArray.push([rowCheck,colCheck]);
-//                     // setRevealed(rowCheck, colCheck);
 
-//                     // explode(rowCheck,colCheck);
-//                     // colCheck = col;
-//                     // rowCheck = row;
-//                     // continue;
-//                 }
-//                 colCheck = colCheck + colOffset;
-//                 rowCheck = rowCheck + rowOffset;
-//             }
-//         }
-//     }
-//     for (let r = 0; r < largeRevealArray.length; r++) {
-//         row = largeRevealArray[r][1];
-//         col = largeRevealArray[r][0];
-//         // console.log(row,col);
-//         setRevealed(col, row);
-//     }
-// }
 function checkAdjacent(row, col) {
     largeRevealArray = [];
     zeroArray = [];
     notMineArray = [];
-    // console.log('checkAdjacent');
     if (withinBounds(row, col)) {
         if (checkZero(row,col) === true) {
             for(let k = 0; k < 8; k++) {
-                // console.log('begin for loop');
                 let colOffset = directions[k][0];
                 let rowOffset = directions[k][1];
                 if (withinBounds(row, col) && checkZero(row, col) === true && checkRevealed(row,col) === false && zeroArray.includes([row,col]) === true) {
@@ -393,20 +321,9 @@ function checkAdjacent(row, col) {
                 }
                 let colCheck = col + colOffset;
                 let rowCheck = row + rowOffset;
-                // console.log(withinBounds(rowCheck, colCheck));
-                // console.log(checkZero(rowCheck, colCheck));
                 if (withinBounds(rowCheck, colCheck)) {
                     if (checkZero(rowCheck, colCheck) === true && checkRevealed(rowCheck,colCheck) === false) {
-                        // if (zeroArray.includes([rowCheck,colCheck]) === true) {
-                            // console.log('no dupe pls');
-                            zeroArray.push([rowCheck,colCheck]);
-                        // } else {
-                        //     console.log('dupe');
-                        //     // break;
-                        //     // continue;
-                        // }
-                        // continue;
-                        // explode(rowCheck,colCheck);
+                        zeroArray.push([rowCheck,colCheck]);
                     }
                     if (checkNotMine(rowCheck, colCheck) && checkRevealed(rowCheck,colCheck) === false) {
                         notMineArray.push([rowCheck,colCheck]);
@@ -419,26 +336,18 @@ function checkAdjacent(row, col) {
     for (let t = 0; t < zeroArray.length; t++) {
         row = zeroArray[t][0];
         col = zeroArray[t][1];
-        // console.log(row,col);
-        // setRevealed(col, row);
-        // setRevealed(row, col);
     }
     for (let s = 0; s < notMineArray.length; s++) {
         row = notMineArray[s][0];
         col = notMineArray[s][1];
-        // console.log(row,col);
         setRevealed(row,col);
-        // checkAdjacent(col,row);
     }
-    // checkAdjacent((notMineArray[0]),(notMineArray[1]));
 }
 
 function zeroSearch(arr) {
-    // console.table(arr);
     for (let i = 0; i < arr.length; i++) {
         let row = arr[i][0];
         let col = arr[i][1];
-        // console.log('row: ',row,' col: ',col);
         setRevealed(row, col);
         revealAdj(row,col);
     }
@@ -449,20 +358,16 @@ function revealAdj(row, col) {
     if ((row < gridRow && row >= 0) && (col < gridCol && col >= 0)) {
         if (checkZero(row,col) === true) {
             for(let k = 0; k < 8; k++) {
-                // console.log('begin for loop');
                 let colOffset = directions[k][0];
                 let rowOffset = directions[k][1];
                 let colCheck = col + colOffset;
                 let rowCheck = row + rowOffset;
                 if (withinBounds(rowCheck, colCheck)) {
-                    // console.log('revealAdj');
                     setRevealed(rowCheck, colCheck);
                     checkAdjacent(rowCheck,colCheck);
                 }
             }
-            // return true;
         } else {
-            // return false;
         }
     }
 }
@@ -471,14 +376,10 @@ function countBoardMines() {
     let mineNum = 0
     for (let a = 0; a < gridCol; a++) {
         for(let b = 0; b < gridRow; b++) {
-            // console.log('loop start');
             if (board[b][a] === -1) {
                 continue;
             }
             countAdjacent(a,b);
-            // if (board[a][b] === 0) {
-            //     boardEdit.style.color = 'blue';
-            // }
         }
     }
     render();
@@ -500,37 +401,28 @@ function render() {
     board.forEach(function(colArr, colIdx) {
         colArr.forEach(function(cellVal, rowIdx) {
             let shade = 'rgb(128, 128, 128)';
-            // console.log(shade);
             const cellId = `r${rowIdx}c${colIdx}`;
             const cellEl = document.getElementById(cellId);
             if (cellEl.getAttribute('class') === 'revealed') {
                 cellEl.style.color = `var(--${NUMCOLORS[cellVal]}`;
             }
-            // cellEl.style.backgroundColor = `${shade}`;
-            // cellEl.innerText = `${cellVal}`
+            if (cellEl.getAttribute('class') === 'hidden') {
+                cellEl.style.color = `var(--${NUMCOLORS[cellVal]}`;
+            }
             cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
         });
     });
   }
-  //! function subRender(colIdx, rowIdx) {
-  //!   console.log('subRender');
-  //!   const cellVal = turn * -1
-  //!   const cellId = `r${rowIdx}c${colIdx}`;
-  //!   const cellEl = document.getElementById(cellId);
-  //!   cellEl.style.color = `var(--${COLORS[cellVal]}`;
-  //!   cellEl.innerText = `${COLORS[cellVal].toUpperCase()}`
-  //! }
-  //
+
   function renderMessage() {
-    if (lock === true) {
+    if (gameEnd === true) {
       msgEl.innerHTML = `<span style="color: var(--red})">Game Over!</span>`;
-      // document.getElementById('board').removeEventListener('click', boardPress);
     } else {
       msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
     }
   }
   //
   function renderControls() {
-    playAgainBtn.style.visibility = lock ? 'visible' : 'hidden';
+    playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
   }
   // * Render functions end
