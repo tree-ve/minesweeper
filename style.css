@@ -27,6 +27,11 @@
     --btn-clr: rgb(98, 88, 76);
     --btn-hover: rgb(120, 55, 39);
     --H: rgb(120, 55, 39);
+    --one: rgb(0,0,255);
+    --two: rgb(0,128,0);
+    --three: rgb(255,0,0);
+    --four: rgb(0,0,128);
+    --five: rgb(128,0,0);
   }
   
   header {
@@ -101,12 +106,12 @@
 
   .hidden {
     /* visibility: hidden; */
-    /* color: lightgray; */
+    color: lightgray;
     background-color: lightgray;
   }
 
   .revealed {
     visibility: visible;
-    color: red;
+    /* color: red; */
     background-color: wheat;
   }
