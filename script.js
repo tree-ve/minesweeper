@@ -44,7 +44,7 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 99;
+const numMines = 2;
 
 //*----- state variables -----*/
 let board = [];
@@ -117,16 +117,18 @@ function gameRunning() {
     }
 }
 function makeBoard(a, b) {
+    let i = 0;
+    let j = 0;
     while (boardEdit.firstChild) {
         boardEdit.removeChild(boardEdit.firstChild);
     }
-    for (let i = 0; i< a; i++) {
-        for(let j = 0; j< b; j++) {
+    for (i = 0; i< a; i++) {
+        for(j = 0; j< b; j++) {
             board[i] = [];
         }
     }
-    for (let i = 0; i< a; i++) {
-        for(let j = 0; j< b; j++) {
+    for (i = 0; i< a; i++) {
+        for(j = 0; j< b; j++) {
             board[i][j] = 0;
             let newDiv = document.createElement('div');
             // let newDiv = document.createElement('button');
@@ -135,6 +137,7 @@ function makeBoard(a, b) {
             boardEdit.appendChild(newDiv);
         }
     }
+    console.log(i,j);
     return board;
 }
 function placeMines(num) {
@@ -154,57 +157,67 @@ function placeMines(num) {
     }
 }
 function boardPress(evt) {
-    if (gameStart === true) {
-        timeNow = Date.now();
-        startTime = Date.now();
-    }
-    let idx = boardEls.indexOf(evt.target);
-    let rowIdx = (parseInt(idx/gridCol)); // maybe const
-    if (idx === -1) return;
-    while (idx > gAVCol) {
-        idx = idx - gridCol;
-    }
-    let colIdx = idx; // maybe const
-    if (board[rowIdx][colIdx] < 0) {
+    if (gameEnd === false) {
         if (gameStart === true) {
-            board[rowIdx][colIdx] = countAdjacent(colIdx, rowIdx);
-            placeMines(1);
-            boardAdjacentCount();
-            gameStart = false;
-            boardPress(evt);
-        } else {
-            let boardBombs = board.flat();
-            let gameOverBombs = boardBombs.map((n, i) => n === -1 ? i : '').filter(String);
-            for (let x = 0; x < gameOverBombs.length; x++) {
-                idx = gameOverBombs[x];
-                rowIdx = rowIdx = (parseInt(idx/gridCol));
-                while (idx > gAVCol) {
-                    idx = idx - gridCol;
-                }
-                colIdx = idx;
-                setRevealed(rowIdx,colIdx);
-            }
-            setRevealed(rowIdx, colIdx);
-            gameEnd = true;
-            render();
+            timeNow = Date.now();
+            startTime = Date.now();
         }
-    } else if (board[rowIdx][colIdx] > 0) {
+        // checkWin();
         let idx = boardEls.indexOf(evt.target);
-        const rowIdx = (parseInt(idx/gridCol));
+        // let checkIdx = idx
+        let rowIdx = (parseInt(idx/gridCol)); // maybe const
         if (idx === -1) return;
         while (idx > gAVCol) {
             idx = idx - gridCol;
         }
-        const colIdx = idx;
-        setRevealed(rowIdx, colIdx);
-        gameStart = false;
-        render();
+        let colIdx = idx; // maybe const
+        if (board[rowIdx][colIdx] < 0) {
+            if (gameStart === true) {
+                board[rowIdx][colIdx] = countAdjacent(colIdx, rowIdx);
+                placeMines(1);
+                boardAdjacentCount();
+                gameStart = false;
+                boardPress(evt);
+            } else {
+                let boardBombs = board.flat();
+                let gameOverBombs = boardBombs.map((n, i) => n === -1 ? i : '').filter(String);
+                for (let x = 0; x < gameOverBombs.length; x++) {
+                    idx = gameOverBombs[x];
+                    rowIdx = rowIdx = (parseInt(idx/gridCol));
+                    while (idx > gAVCol) {
+                        idx = idx - gridCol;
+                    }
+                    colIdx = idx;
+                    setRevealed(rowIdx,colIdx);
+                }
+                setRevealed(rowIdx, colIdx);
+                winner = false;
+                gameEnd = true;
+                render();
+            }
+        } else if (board[rowIdx][colIdx] > 0) {
+            let idx = boardEls.indexOf(evt.target);
+            const rowIdx = (parseInt(idx/gridCol));
+            if (idx === -1) return;
+            while (idx > gAVCol) {
+                idx = idx - gridCol;
+            }
+            const colIdx = idx;
+            setRevealed(rowIdx, colIdx);
+            gameStart = false;
+            checkWin();
+            render();
+        } else {
+            setRevealed(rowIdx, colIdx);
+            checkAdjacent(rowIdx,colIdx);
+            bounce = 0;
+            gameStart = false;
+            checkWin();
+            render();
+        }
     } else {
-        setRevealed(rowIdx, colIdx);
-        checkAdjacent(rowIdx,colIdx);
-        bounce = 0;
-        gameStart = false;
-        render();
+        console.log('gameEnd');
+        console.log(winner);
     }
 }
 function startTimer() {
@@ -300,6 +313,31 @@ function withinBounds(row, col) {
         return false;
     }
 }
+function checkWin() {
+    let boardHidden = [...document.querySelectorAll('.hidden')];
+    console.log(boardHidden.length);
+    // console.log(idx);
+    // if boardHidden
+    let count = 0;
+    for (let x = 0; x < boardHidden.length; x++) {
+        hiddenCell = boardHidden[x].getAttribute('id')
+        let cellVal = (document.getElementById(`${hiddenCell}`)).innerText;
+        if (cellVal === 'B') {
+            console.log(cellVal);
+            count++;
+        }
+        // console.log(cellVal);
+        // console.log(hiddenCell);
+    }
+    console.log(count);
+    if (count === boardHidden.length) {
+        console.log('win');
+        gameEnd = true;
+        winner = true;
+    }
+    // boardHidden = boardHidden[0].getAttribute('id')
+    // console.log(boardHidden);
+}
 // * Validation functions end
 
 // * Reveal functions start
@@ -391,14 +429,14 @@ function render() {
 
   function renderMessage() {
     if (gameEnd === true) {
-      msgEl.innerHTML = ` `;//`<span style="color: var(--red})">Game Over!</span>`;
+      msgEl.innerHTML = `<span style="color: var(--red})">Game Over!</span>`;
     } else {
       msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
     }
   }
   //
   function renderControls() {
-    playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
+    // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
     // const gameOver = document.getElementById('gameOver');
     // console.log(gameOver);
     if (gameEnd === true) {

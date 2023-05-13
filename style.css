@@ -55,7 +55,15 @@
     background-color: var(--main-clr);
     grid-template-columns: 1fr 1fr 1fr;
     justify-content: space-around;
+    align-items: center;
   }
+  /* subheadings > * {
+    display: inline grid;
+    background-color: var(--main-clr);
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    /* justify-content: space-around;
+    align-items: center; */
+  /* } */
 
   h1 {
     color: var(--sub-clr);
@@ -104,6 +112,9 @@
   
   button {
     margin-top: 4vmin;
+    display: grid;
+    justify-content: center;
+    align-items: center;
     padding: 2vmin;
     font-size: 2vmin;
     /* border-radius: 1vmin; */
