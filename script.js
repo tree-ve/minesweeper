@@ -157,25 +157,25 @@ function makeBoard(a, b) {
             while (i === 0) {
                 // Top side
                 topSide = document.getElementById(`r${j}c${i}`)
-                topSide.style.marginTop = '1vmin solid rgb(150,150,150)';
+                topSide.style.borderTop = '0vmin';
                 break;
             }
             while (i === (a-1)) {
                 // Bottom side
                 bottomSide = document.getElementById(`r${j}c${i}`)
-                bottomSide.style.marginBottom = '1vmin solid rgb(150,150,150)';
+                bottomSide.style.borderBottom = '0vmin';
                 break;
             }
             while (j === 0) {
                 // Left side
                 leftSide = document.getElementById(`r${j}c${i}`)
-                leftSide.style.marginLeft = '1vmin solid rgb(150,150,150)';
+                leftSide.style.borderLeft = '0vmin';
                 break;
             }
             while (j === (b-1)) {
                 // Right side
                 rightSide = document.getElementById(`r${j}c${i}`)
-                rightSide.style.marginRight = '1vmin solid rgb(150,150,150)';
+                rightSide.style.borderRight = '0vmin';
                 break;
             }
         }
