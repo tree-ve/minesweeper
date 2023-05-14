@@ -9,12 +9,12 @@
     /* font-family: 'VT323', sans-serif; */
     /* font-family: 'DotGothic16', sans-serif; */
     font-family: 'Press Start 2P', sans-serif;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    /* flex-direction: column; */
     justify-content: center;
-    align-items: center;
+    /* align-items: start; */
     background-color: var(--bg-clr);
-    transform: scale(0.95);
+    /* transform: scale(0.95); */
   }
   
   :root {
@@ -29,7 +29,7 @@
     /* --sub-clr: rgb(192, 186, 173); */
     --hidden: rgb(180,180,180);
     --sub-clr: rgb(123,123,123);
-    --btn-clr: rgb(98, 88, 76);
+    /* --btn-clr: rgb(98, 88, 76); */
     --btn-hover: rgb(120, 55, 39);
     --H: rgb(120, 55, 39);
     --one: rgb(0,0,255);
@@ -43,38 +43,53 @@
   }
   
   header {
-    padding-top: 15vh;
+    /* padding-top: 15vh; */
     font-size: 8vmin;
-    color: var(--main-clr);
+    /* color: var(--main-clr); */
     letter-spacing: 0.35vmin;
     display: grid;
+    /* justify-items: center; */
+    /* align-items: end; */
+    place-items: center;
   }
+  /* header > img{
+    float: left;
+    background: "https://raw.githubusercontent.com/joelbyrd/external-resources/master/images/minesweeper.png";
+    background-position: -16px -23px;
+    clip: rect(0, 100px, 200px, 0);
+    height: 16px;
+    width: 16px;
+  } */
 
   subheadings {
     display: grid;
     background-color: var(--main-clr);
-    grid-template-columns: 1fr 1fr 1fr;
-    justify-content: space-around;
+    grid-template-columns: 1.1fr auto 1.1fr;
+    width: 120vmin;
+    justify-content: space-between;
     align-items: center;
+    margin: 1vmin solid rgb(150,150,150);
   }
-  /* subheadings > * {
-    display: inline grid;
-    background-color: var(--main-clr);
-    /* grid-template-columns: 1fr 1fr 1fr; */
-    /* justify-content: space-around;
+  subheadings > img {
+    height: 2vmin;
+    /* justify-content: center;
     align-items: center; */
-  /* } */
-
+  }
+  
   h1 {
     color: var(--sub-clr);
     font-size: 4vmin;
     display: inline grid;
-    /* justify-content: start; */
+    /* justify-items: start; */
+    /* align-items: start; */
+    padding: 1vmin;
+    border: 0.5vmin solid var(--sub-clr);
+    margin: auto;
   }
   
   #board {
     display: grid;
-    margin-top: 2vmin;
+    /* margin-top: 2vmin; */
   }
   
   #board > div {
@@ -101,28 +116,27 @@
     border-right: 1vmin solid rgb(43, 39, 37);
   } */
   
-  box {
+  /* box {
     display: grid;
     height: 30vmin;
     width:30vmin;
     border: 0.4vmin solid red;
     overflow: visible;
     margin-top: 2vmin;
-  }
+  } */
   
   button {
-    margin-top: 4vmin;
+    /* margin-top: 4vmin; */
     display: grid;
     justify-content: center;
     align-items: center;
-    padding: 2vmin;
-    font-size: 2vmin;
-    /* border-radius: 1vmin; */
-    /* border: 0.1vmin solid var(--btn-clr); */
-    color: var(--sub-clr);
     background-color: var(--main-clr);
-    /* transition: all 75ms ease-in; */
-    /* font-family: 'TF2 Build', sans-serif; */
+    /* padding: auto; */
+    font-size: 2vmin;
+    height: 6vmin;
+    width: 6vmin;
+    color: var(--sub-clr);
+    /* background-color: var(--main-clr); */
     font-family: 'Press Start 2P', cursive;
   }
   
@@ -130,7 +144,6 @@
     color: var(--hidden);
     background-color: var(--hidden);
     border: 0.1vmin solid var(--sub-clr);
-    /* transition: all 75ms ease-in; */
     cursor: pointer;
   }
 
@@ -140,8 +153,22 @@
     background-color: var(--hidden);
   }
 
+  .flagged {
+    /* visibility: hidden; */
+    color: maroon;
+    background-color: var(--hidden);
+  }
+
   .revealed {
     visibility: visible;
     /* color: red; */
     background-color: var(--main-clr);
+  }
+  subheadings > button > img {
+    object-fit: contain;
+    height: 5vmin;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    /* width: 5vmin; */
   }

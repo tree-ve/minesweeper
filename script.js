@@ -11,7 +11,7 @@ const directions = [
 ]
 
 const DISPLAYNUM = {
-    '-1': 'B',
+    '-1': 'M',
     '0': ' ',
     '1': '1',
     '2': '2',
@@ -22,9 +22,21 @@ const DISPLAYNUM = {
     '7': '7',
     '8': '8',
 }
+// const DISPLAYNUMHIDDEN = {
+//     '-1': '',
+//     '0': '',
+//     '1': '',
+//     '2': '',
+//     '3': '',
+//     '4': '',
+//     '5': '',
+//     '6': '',
+//     '7': '',
+//     '8': '',
+// }
 
 const NUMCOLORS = {
-    '-1': 'bomb',
+    '-1': 'mine',
     '0': 'empty',
     '1': 'one',
     '2': 'two',
@@ -44,7 +56,8 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 2;
+const numMines = 10;
+
 
 //*----- state variables -----*/
 let board = [];
@@ -55,6 +68,7 @@ let score = 0;
 let timer = "000";
 let timeNow = Date.now();
 let startTime = Date.now();
+let endTime = 0;
 let gameStart = true;
 let gameEnd = false;
 let xDir = 0;
@@ -98,6 +112,7 @@ function init() {
     turn = 1;
     winner = null;
     document.getElementById('board').addEventListener('click', boardPress);
+    document.getElementById('board').addEventListener('contextmenu', flag);
     placeMines(numMines);
     boardAdjacentCount();
     const startTime = Date.now();
@@ -119,6 +134,10 @@ function gameRunning() {
 function makeBoard(a, b) {
     let i = 0;
     let j = 0;
+    let topSide;
+    let bottomSide;
+    let leftSide;
+    let rightSide;
     while (boardEdit.firstChild) {
         boardEdit.removeChild(boardEdit.firstChild);
     }
@@ -135,9 +154,33 @@ function makeBoard(a, b) {
             newDiv.setAttribute('id', `r${j}c${i}`);
             newDiv.setAttribute('class', 'hidden');
             boardEdit.appendChild(newDiv);
+            while (i === 0) {
+                // console.log(`r${j}c${i}`); // Top side
+                topSide = document.getElementById(`r${j}c${i}`)
+                topSide.style.marginTop = '1vmin solid rgb(150,150,150)';
+                break;
+            }
+            while (i === (a-1)) {
+                // console.log(`r${j}c${i}`); // Bottom side
+                bottomSide = document.getElementById(`r${j}c${i}`)
+                bottomSide.style.marginBottom = '1vmin solid rgb(150,150,150)';
+                break;
+            }
+            while (j === 0) {
+                // console.log(`r${j}c${i}`); // Left side
+                leftSide = document.getElementById(`r${j}c${i}`)
+                leftSide.style.marginLeft = '1vmin solid rgb(150,150,150)';
+                break;
+            }
+            while (j === (b-1)) {
+                // console.log(`r${j}c${i}`); // Right side
+                rightSide = document.getElementById(`r${j}c${i}`)
+                rightSide.style.marginRight = '1vmin solid rgb(150,150,150)';
+                break;
+            }
         }
     }
-    console.log(i,j);
+    // console.log(`r${j-1}c${i-1}`);
     return board;
 }
 function placeMines(num) {
@@ -179,10 +222,10 @@ function boardPress(evt) {
                 gameStart = false;
                 boardPress(evt);
             } else {
-                let boardBombs = board.flat();
-                let gameOverBombs = boardBombs.map((n, i) => n === -1 ? i : '').filter(String);
-                for (let x = 0; x < gameOverBombs.length; x++) {
-                    idx = gameOverBombs[x];
+                let boardMines = board.flat();
+                let gameOverMines = boardMines.map((n, i) => n === -1 ? i : '').filter(String);
+                for (let x = 0; x < gameOverMines.length; x++) {
+                    idx = gameOverMines[x];
                     rowIdx = rowIdx = (parseInt(idx/gridCol));
                     while (idx > gAVCol) {
                         idx = idx - gridCol;
@@ -220,25 +263,46 @@ function boardPress(evt) {
         console.log(winner);
     }
 }
+
+function flag(evt) {
+    if (gameEnd === false) {    
+        evt.preventDefault();
+        if (gameStart === true) {
+            timeNow = Date.now();
+            startTime = Date.now();
+        }
+        // checkWin();
+        let idx = boardEls.indexOf(evt.target);
+        let rowIdx = (parseInt(idx/gridCol)); // maybe const
+        if (idx === -1) return;
+        while (idx > gAVCol) {
+            idx = idx - gridCol;
+        }
+        let colIdx = idx; // maybe const
+        setFlagged(rowIdx,colIdx);
+        console.log('contextmenu')
+    } else {
+        console.log('gameEnd');
+    }
+}
+
 function startTimer() {
     const timerId = setInterval(function() {
         if (gameStart === true) {
-            // console.log('game not started');
             timeNow = 0;
             startTime = 0;
         } else if (gameStart === false) {
-            // console.log('game has now started');
             timeNow = Date.now();
+        }
+        if (gameEnd === true) {
+            timeNow = endTime;
+            return;
         }
         timer = timeNow - startTime;
         timer = timer / 1000;
         timer = Math.round(timer);
         timer = timer.toString();
         while (timer.length < 3) timer = "0" + timer;
-        if (gameEnd === true) {
-            timer = 0;
-            return;
-        }
         render();
     }, 1000);
 }
@@ -314,29 +378,21 @@ function withinBounds(row, col) {
     }
 }
 function checkWin() {
-    let boardHidden = [...document.querySelectorAll('.hidden')];
-    console.log(boardHidden.length);
-    // console.log(idx);
-    // if boardHidden
+    let boardHiddenMines = [...document.querySelectorAll('.hidden')];
+    let boardFlagged = [...document.querySelectorAll('.flagged')];
+    let boardHidden = boardHiddenMines.concat(boardFlagged);
     let count = 0;
     for (let x = 0; x < boardHidden.length; x++) {
         hiddenCell = boardHidden[x].getAttribute('id')
         let cellVal = (document.getElementById(`${hiddenCell}`)).innerText;
-        if (cellVal === 'B') {
-            console.log(cellVal);
-            count++;
-        }
-        // console.log(cellVal);
-        // console.log(hiddenCell);
     }
-    console.log(count);
-    if (count === boardHidden.length) {
+    // console.log(count);
+    if (numMines === boardHidden.length) {
         console.log('win');
         gameEnd = true;
         winner = true;
+        endTime = Date.now();
     }
-    // boardHidden = boardHidden[0].getAttribute('id')
-    // console.log(boardHidden);
 }
 // * Validation functions end
 
@@ -383,6 +439,10 @@ function setRevealed(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
     cellClick.setAttribute('class', 'revealed');
 }
+function setFlagged(row, col) {
+    const cellClick = document.getElementById(`r${col}c${row}`)
+    cellClick.setAttribute('class', 'flagged');
+}
 function arraySearch(arr) {
     for (let i = 0; i < arr.length; i++) {
         let row = arr[i][0];
@@ -397,45 +457,43 @@ function arraySearch(arr) {
 function render() {
     renderBoard();
     renderMessage();
-    renderControls();
-  }
-  
-//   function renderSansBoard() {
-    // renderMessage();
-    // renderControls();
-//   }
-  //
+    renderControls();//! Obsolete
+}
   function renderBoard() {
     board.forEach(function(colArr, colIdx) {
         colArr.forEach(function(cellVal, rowIdx) {
-            let shade = 'rgb(128, 128, 128)';
+            // let shade = 'rgb(128, 128, 128)';
             const cellId = `r${rowIdx}c${colIdx}`;
             const cellEl = document.getElementById(cellId);
             if (cellEl.getAttribute('class') === 'revealed') {
                 cellEl.style.color = `var(--${NUMCOLORS[cellVal]}`;
             }
-            if (cellEl.getAttribute('class') === 'hidden') {
+            if (cellEl.getAttribute('class') === 'flagged') {
                 cellEl.style.color = `var(--main-clr}`;
+                cellEl.innerText = `F`;
+            }
+            if (cellEl.getAttribute('class') === 'hidden') {
+                // cellEl.style.color = `var(--main-clr}`;
                 cellEl.innerText = ``;
             } else if (cellEl.getAttribute('class') === 'revealed') {
                 cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
             }
-            cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
-            renderControls();
+            // cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
+            renderControls(); //! Obsolete
             // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
         });
     });
   }
 
   function renderMessage() {
-    if (gameEnd === true) {
+    if (gameEnd === true && winner === false) {
       msgEl.innerHTML = `<span style="color: var(--red})">Game Over!</span>`;
     } else {
       msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
     }
   }
   //
-  function renderControls() {
+  function renderControls() {//! Obsolete
     // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
     // const gameOver = document.getElementById('gameOver');
     // console.log(gameOver);
