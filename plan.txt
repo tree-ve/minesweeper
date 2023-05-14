@@ -105,3 +105,6 @@ only then does it start looking at the cells around it
 5. prevent clicks after a game over
 6. Winner function
 7. make revealed hover cursor default style
+
+
+flag limit
