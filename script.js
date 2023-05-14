@@ -224,6 +224,7 @@ function boardPress(evt) {
             } else {
                 let boardMines = board.flat();
                 let gameOverMines = boardMines.map((n, i) => n === -1 ? i : '').filter(String);
+                winner = false;
                 for (let x = 0; x < gameOverMines.length; x++) {
                     idx = gameOverMines[x];
                     rowIdx = rowIdx = (parseInt(idx/gridCol));
@@ -231,10 +232,13 @@ function boardPress(evt) {
                         idx = idx - gridCol;
                     }
                     colIdx = idx;
+                    // console.log('gom');
+                    // winner = false;
                     setRevealed(rowIdx,colIdx);
                 }
-                setRevealed(rowIdx, colIdx);
-                winner = false;
+                // winner = false;
+                // console.log('gom irrelevent');
+                // setRevealed(rowIdx, colIdx);
                 gameEnd = true;
                 render();
             }
@@ -265,8 +269,8 @@ function boardPress(evt) {
 }
 
 function flag(evt) {
+    evt.preventDefault();
     if (gameEnd === false) {    
-        evt.preventDefault();
         if (gameStart === true) {
             timeNow = Date.now();
             startTime = Date.now();
@@ -279,9 +283,22 @@ function flag(evt) {
             idx = idx - gridCol;
         }
         let colIdx = idx; // maybe const
-        setFlagged(rowIdx,colIdx);
-        console.log('contextmenu')
+        // console.log(rowIdx,colIdx)
+        const plsHide = document.getElementById(`r${colIdx}c${rowIdx}`);
+        console.log(plsHide.getAttribute('class'));
+        if (checkFlagged(rowIdx,colIdx)) {
+            console.log('kjebgadk');
+            setHidden(rowIdx,colIdx);
+            console.log(plsHide.getAttribute('class'));
+            render();
+        } else if (!checkRevealed(rowIdx,colIdx)) {
+            // console.log('eufkajb');
+            setFlagged(rowIdx,colIdx);
+            // console.log('contextmenu')
+            render();
+        }
     } else {
+        render();
         console.log('gameEnd');
     }
 }
@@ -370,6 +387,17 @@ function checkRevealed(row,col) {
         return false;
     }
 }
+function checkFlagged(row,col) {
+    const cell = document.getElementById(`r${col}c${row}`)
+    let revealed = cell.getAttribute('class');
+    if (revealed === 'flagged') {
+        // console.log('flagged', row, col);
+        return true;
+    } else {
+        // console.log('not flagged', row, col);
+        return false;
+    } 
+}
 function withinBounds(row, col) {
     if ((row < gridRow && row >= 0) && (col < gridCol && col >= 0)) {
         return true;
@@ -407,10 +435,10 @@ function checkAdjacent(row, col) {
             let colCheck = col + colOffset;
             let rowCheck = row + rowOffset;
             if (withinBounds(rowCheck, colCheck)) {
-                if (checkZero(rowCheck, colCheck) === true && !checkRevealed(rowCheck,colCheck)) {
+                if (checkZero(rowCheck, colCheck) === true && !checkRevealed(rowCheck,colCheck) && !checkFlagged(rowCheck,colCheck)) {
                     zeroArray.push([rowCheck,colCheck]);
                 }
-                if (checkNotMine(rowCheck, colCheck) && !checkRevealed(rowCheck,colCheck)) {
+                if (checkNotMine(rowCheck, colCheck) && !checkRevealed(rowCheck,colCheck) && !checkFlagged(rowCheck,colCheck)) {
                     notMineArray.push([rowCheck,colCheck]);
                 }
             }
@@ -422,7 +450,7 @@ function checkAdjacent(row, col) {
 function revealAdj(row, col) {
     zeroArray = [];
     notMineArray = [];
-    if (withinBounds(row,col) && checkZero(row,col) && checkRevealed(row,col)) {
+    if (withinBounds(row,col) && checkZero(row,col) && checkRevealed(row,col) && !checkFlagged(row,col)) {
         for(let k = 0; k < 8; k++) {
             let colOffset = directions[k][0];
             let rowOffset = directions[k][1];
@@ -432,16 +460,33 @@ function revealAdj(row, col) {
                 setRevealed(rowCheck, colCheck);
                 checkAdjacent(rowCheck,colCheck);
             }
+            // if (withinBounds(rowCheck, colCheck) && checkFlagged(rowCheck,colCheck)) {
+            //     setFlagged(rowCheck,colCheck);
+            // }
         }
     }
 }
 function setRevealed(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
-    cellClick.setAttribute('class', 'revealed');
+    if (cellClick.getAttribute('class') === 'flagged' && winner === false) {
+        console.log(cellClick.getAttribute('class'));
+        cellClick.setAttribute('class', 'revealed');
+    } else if (cellClick.getAttribute('class') === 'flagged' && winner === null) {
+        // console.log(cellClick.getAttribute('class'));
+        cellClick.setAttribute('class', 'flagged');
+    } else if (cellClick.getAttribute('class') !== 'flagged') {
+        // console.log(cellClick.getAttribute('class'));
+        cellClick.setAttribute('class', 'revealed');
+    }
+    // cellClick.setAttribute('class', 'revealed');
 }
 function setFlagged(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
     cellClick.setAttribute('class', 'flagged');
+}
+function setHidden(row, col) {
+    const cellClick = document.getElementById(`r${col}c${row}`)
+    cellClick.setAttribute('class', 'hidden');
 }
 function arraySearch(arr) {
     for (let i = 0; i < arr.length; i++) {
