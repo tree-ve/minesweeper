@@ -47,6 +47,10 @@ const NUMCOLORS = {
     '7': 'seven',
     '8': 'eight',
 }
+
+const HIGHSCORES = [];
+
+const scoreLowest = HIGHSCORES[HIGHSCORES.length - 1];
 // const explosion = new Audio("https://www.101soundboards.com/sounds/421685-explosion-02");
 // explosion.play();
 
@@ -56,7 +60,7 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 10;
+const numMines = 5;
 
 
 //*----- state variables -----*/
@@ -79,8 +83,11 @@ let bounce = 0;
 let exploreArray = [];
 
 //*----- cached elements  -----*/
+let userInput = document.getElementById('username');
 const msgEl = document.getElementById('timer');
-const playAgainBtn = document.querySelector('button');
+// const playAgainBtn = document.querySelector('button');
+const playAgainBtn = document.getElementById('resetButton');
+const userInputBtn = document.getElementById('userInputButton');
 const boardEdit = document.getElementById('board');
 init();
 let boardEls = [...document.querySelectorAll('#board > div')];
@@ -90,11 +97,17 @@ boardEdit.style.fontSize = `${60 / gridCol}vmin`;
 
 //*----- event listeners -----*/
 playAgainBtn.addEventListener('click', start);
+userInputBtn.addEventListener('click', getUserScore);
 
 //*----- functions -----*/
+function sortScores() {
+
+}
+
 function start() {
     init();
     boardEls = [...document.querySelectorAll('#board > div')];
+    userInputBtn.addEventListener('click', getUserScore);
     // boardEls = [...document.querySelectorAll('#board > button')];
 }
 
@@ -118,6 +131,11 @@ function init() {
     const startTime = Date.now();
     let timeNow = Date.now();
     let boardEls = [...document.querySelectorAll('#board > div')];
+    userInput.value = '';
+    userInput.style.pointerEvents = 'none';
+    userInput.style.color = 'var(--sub-clr)';
+    userInput.style.backgroundColor = 'var(--main-clr)';
+    userInput.style.textTransform = 'lowercase';
     // let boardEls = [...document.querySelectorAll('#board > button')];
     startTimer();
     render();
@@ -409,6 +427,7 @@ function checkWin() {
     let boardHiddenMines = [...document.querySelectorAll('.hidden')];
     let boardFlagged = [...document.querySelectorAll('.flagged')];
     let boardHidden = boardHiddenMines.concat(boardFlagged);
+    // let userInput = document.getElementById('username');
     let count = 0;
     for (let x = 0; x < boardHidden.length; x++) {
         hiddenCell = boardHidden[x].getAttribute('id')
@@ -420,9 +439,58 @@ function checkWin() {
         gameEnd = true;
         winner = true;
         endTime = Date.now();
+        userInput.style.pointerEvents = 'all';
+        userInput.style.color = 'var(--main-clr)';
+        userInput.style.backgroundColor = 'white';
+        userInput.style.textTransform = 'uppercase';
     }
 }
 // * Validation functions end
+
+// * Scoreboard handling start
+function getUserScore() {
+    // console.log('kjbawf');
+    let username = userInput.value.toUpperCase();
+    console.log(username);
+    console.log(typeof(timer));
+    document.getElementById('username').value
+    // timer = parseInt(timer);
+    // userAndScore = username + ' - ' + timer;
+    // console.log(userAndScore);
+    HIGHSCORES.push([username, timer]);
+    userInputBtn.removeEventListener('click', getUserScore);
+    console.log('user input disabled')
+    userInput.value = '';
+    userInput.style.pointerEvents = 'none';
+    userInput.style.color = 'var(--sub-clr)';
+    userInput.style.backgroundColor = 'var(--main-clr)';
+    userInput.style.textTransform = 'lowercase';
+    HIGHSCORES.sort(function(a,b) {
+        return a[1]-b[1]
+    });
+    let scoreList = document.querySelectorAll('li');
+    console.log(scoreList.length);
+    // let scoreListItem = document.querySelector(`#${x+1}`);
+    // console.log(scoreList.innerText);
+    for (let x = 0; x < scoreList.length; x++) {
+        let scoreListItem = document.getElementById(`${x + 1}`);
+        // console.log(scoreListItem.innerText);
+        if (HIGHSCORES[x] > '000') {
+            // console.log('opt 1');
+            scoreListItem.innerText = HIGHSCORES[x][0] + ' - ' + HIGHSCORES[x][1];
+            // scoreListItem.innerText.toString().replace(',','-');
+            // scoreListItem.innerText.replace('-',',');
+            console.log(scoreListItem.innerText);
+        } else {
+            // console.log('opt 2');
+            scoreListItem.innerText = '';
+        }
+    }
+
+}
+
+
+// * Scoreboard handling end
 
 // * Reveal functions start
 function checkAdjacent(row, col) {

@@ -14,6 +14,7 @@
     justify-content: center;
     /* align-items: start; */
     background-color: var(--bg-clr);
+    /* grid-row: 4; */
     /* transform: scale(0.95); */
   }
   
@@ -31,8 +32,8 @@
     --hidden-hover: rgb(170,170,170);
     --sub-clr: rgb(123,123,123);
     /* --btn-clr: rgb(98, 88, 76); */
-    --btn-hover: rgb(120, 55, 39);
-    --H: rgb(120, 55, 39);
+    /* --btn-hover: rgb(120, 55, 39); */
+    /* --H: rgb(120, 55, 39); */
     --one: rgb(0,0,255);
     --two: rgb(0,128,0);
     --three: rgb(255,0,0);
@@ -44,11 +45,12 @@
   }
   
   header {
-    /* padding-top: 15vh; */
+    padding: 2vh 0 2vh 0;
     font-size: 8vmin;
     /* color: var(--main-clr); */
     letter-spacing: 0.35vmin;
-    display: grid;
+    display: flex;
+    justify-content: center;
     /* justify-items: center; */
     /* align-items: end; */
     place-items: center;
@@ -63,19 +65,22 @@
   } */
 
   subheadings {
-    display: grid;
+    display: flex;
     background-color: var(--main-clr);
-    grid-template-columns: 1.1fr auto 1.1fr;
+    /* grid-template-columns: 1.1fr auto 1.1fr; */
     width: 120vmin;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     margin: 1vmin solid rgb(150,150,150);
   }
-  subheadings > img {
-    height: 2vmin;
+  subheadings > div {
+    display: inline-grid;
+    grid-template-columns: 36vmin 7vmin;
+    /* height: 2vmin; */
     /* justify-content: center;
     align-items: center; */
   }
+  
   
   h1 {
     color: var(--sub-clr);
@@ -83,11 +88,51 @@
     display: inline grid;
     /* justify-items: start; */
     /* align-items: start; */
+    height: 7vmin;
+    width: 43vmin;
     padding: 1vmin;
     border: 0.5vmin solid var(--sub-clr);
-    margin: auto;
+    /* margin: auto; */
   }
-  
+
+  #username {
+    justify-items: start;
+    font-size: 4vmin;
+    /* display: inline grid; */
+    /* justify-items: start; */
+    /* align-items: start; */
+    height: 7vmin;
+    width: 36vmin;
+    padding: 1vmin;
+    border: 0.5vmin solid var(--sub-clr);
+    /* margin: auto; */
+    font-family: 'Press Start 2P', sans-serif;
+    /* color: black; */
+    /* pointer-events: none; */
+    /* background-color: var(--main-clr); */
+    
+  }
+  ::placeholder {
+    /* display: grid; */
+    color: var(--sub-clr);
+    font-size: 3vmin;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+  #userInputButton {
+    display: inline-grid;
+    height: 7vmin;
+    width: 7vmin;
+    font-size: 1vmin;
+    /* disabled: true; */
+  }
+  #userInputBtn:hover {
+    color: rgb(67, 67, 67);
+    background-color: var(--hidden-hover);
+
+  }
+
   #board {
     display: grid;
     /* margin-top: 2vmin; */
@@ -104,28 +149,7 @@
     /* color: red; */
     
   }
-  /* #board > #c0r0, #board >  #c1r0, #board >   #c2r0 {
-    border-bottom: 1vmin solid rgb(43, 39, 37);
-  }
-  #board > #c0r2, #board >  #c1r2, #board >   #c2r2 {
-    border-top: 1vmin solid rgb(43, 39, 37);
-  }
-  #board > #c0r0, #board >  #c0r1, #board >   #c0r2 {
-    border-left: 1vmin solid rgb(43, 39, 37);
-  }
-  #board > #c2r0, #board >  #c2r1, #board >   #c2r2 {
-    border-right: 1vmin solid rgb(43, 39, 37);
-  } */
-  
-  /* box {
-    display: grid;
-    height: 30vmin;
-    width:30vmin;
-    border: 0.4vmin solid red;
-    overflow: visible;
-    margin-top: 2vmin;
-  } */
-  
+
   button {
     /* margin-top: 4vmin; */
     display: grid;
@@ -171,5 +195,29 @@
     display: grid;
     justify-content: center;
     align-items: center;
-    /* width: 5vmin; */
+  }
+
+  #scoreboard {
+    grid-row-start: 4;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    font-size: 3vmin;
+  }
+  #scoreTitle {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+  }
+  .score {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    grid-template-columns: repeat(3, 1fr);
+    width: 120vmin;
+    /* padding: 20px; */
+  }
+  li {
+    font-size: 2vmin;
+    width: 25vmin;
+    padding: 1vmin;
   }
