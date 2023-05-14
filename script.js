@@ -22,18 +22,6 @@ const DISPLAYNUM = {
     '7': '7',
     '8': '8',
 }
-// const DISPLAYNUMHIDDEN = {
-//     '-1': '',
-//     '0': '',
-//     '1': '',
-//     '2': '',
-//     '3': '',
-//     '4': '',
-//     '5': '',
-//     '6': '',
-//     '7': '',
-//     '8': '',
-// }
 
 const NUMCOLORS = {
     '-1': 'mine',
@@ -48,11 +36,8 @@ const NUMCOLORS = {
     '8': 'eight',
 }
 
-const HIGHSCORES = [];
-
-const scoreLowest = HIGHSCORES[HIGHSCORES.length - 1];
-// const explosion = new Audio("https://www.101soundboards.com/sounds/421685-explosion-02");
-// explosion.play();
+let HIGHSCORES = [];
+manageHighscores();
 
 const gridRow = 16;
 const gridCol = 30;
@@ -85,13 +70,11 @@ let exploreArray = [];
 //*----- cached elements  -----*/
 let userInput = document.getElementById('username');
 const msgEl = document.getElementById('timer');
-// const playAgainBtn = document.querySelector('button');
 const playAgainBtn = document.getElementById('resetButton');
 const userInputBtn = document.getElementById('userInputButton');
 const boardEdit = document.getElementById('board');
 init();
 let boardEls = [...document.querySelectorAll('#board > div')];
-// let boardEls = [...document.querySelectorAll('#board > button')];
 const gameOver = document.getElementById('gameOver');
 boardEdit.style.fontSize = `${60 / gridCol}vmin`;
 
@@ -108,11 +91,12 @@ function start() {
     init();
     boardEls = [...document.querySelectorAll('#board > div')];
     userInputBtn.addEventListener('click', getUserScore);
-    // boardEls = [...document.querySelectorAll('#board > button')];
 }
 
 function init() {
     board = [];
+    HIGHSCORES = [];
+    localStorage.removeItem('debug');
     gameStart = true;
     gameEnd = false;
     xDir = 0;
@@ -136,7 +120,6 @@ function init() {
     userInput.style.color = 'var(--sub-clr)';
     userInput.style.backgroundColor = 'var(--main-clr)';
     userInput.style.textTransform = 'lowercase';
-    // let boardEls = [...document.querySelectorAll('#board > button')];
     startTimer();
     render();
 }
@@ -168,37 +151,35 @@ function makeBoard(a, b) {
         for(j = 0; j< b; j++) {
             board[i][j] = 0;
             let newDiv = document.createElement('div');
-            // let newDiv = document.createElement('button');
             newDiv.setAttribute('id', `r${j}c${i}`);
             newDiv.setAttribute('class', 'hidden');
             boardEdit.appendChild(newDiv);
             while (i === 0) {
-                // console.log(`r${j}c${i}`); // Top side
+                // Top side
                 topSide = document.getElementById(`r${j}c${i}`)
                 topSide.style.marginTop = '1vmin solid rgb(150,150,150)';
                 break;
             }
             while (i === (a-1)) {
-                // console.log(`r${j}c${i}`); // Bottom side
+                // Bottom side
                 bottomSide = document.getElementById(`r${j}c${i}`)
                 bottomSide.style.marginBottom = '1vmin solid rgb(150,150,150)';
                 break;
             }
             while (j === 0) {
-                // console.log(`r${j}c${i}`); // Left side
+                // Left side
                 leftSide = document.getElementById(`r${j}c${i}`)
                 leftSide.style.marginLeft = '1vmin solid rgb(150,150,150)';
                 break;
             }
             while (j === (b-1)) {
-                // console.log(`r${j}c${i}`); // Right side
+                // Right side
                 rightSide = document.getElementById(`r${j}c${i}`)
                 rightSide.style.marginRight = '1vmin solid rgb(150,150,150)';
                 break;
             }
         }
     }
-    // console.log(`r${j-1}c${i-1}`);
     return board;
 }
 function placeMines(num) {
@@ -223,15 +204,13 @@ function boardPress(evt) {
             timeNow = Date.now();
             startTime = Date.now();
         }
-        // checkWin();
         let idx = boardEls.indexOf(evt.target);
-        // let checkIdx = idx
-        let rowIdx = (parseInt(idx/gridCol)); // maybe const
+        let rowIdx = (parseInt(idx/gridCol));
         if (idx === -1) return;
         while (idx > gAVCol) {
             idx = idx - gridCol;
         }
-        let colIdx = idx; // maybe const
+        let colIdx = idx;
         if (board[rowIdx][colIdx] < 0) {
             if (gameStart === true) {
                 board[rowIdx][colIdx] = countAdjacent(colIdx, rowIdx);
@@ -250,13 +229,8 @@ function boardPress(evt) {
                         idx = idx - gridCol;
                     }
                     colIdx = idx;
-                    // console.log('gom');
-                    // winner = false;
                     setRevealed(rowIdx,colIdx);
                 }
-                // winner = false;
-                // console.log('gom irrelevent');
-                // setRevealed(rowIdx, colIdx);
                 gameEnd = true;
                 render();
             }
@@ -280,9 +254,6 @@ function boardPress(evt) {
             checkWin();
             render();
         }
-    } else {
-        console.log('gameEnd');
-        console.log(winner);
     }
 }
 
@@ -293,31 +264,23 @@ function flag(evt) {
             timeNow = Date.now();
             startTime = Date.now();
         }
-        // checkWin();
         let idx = boardEls.indexOf(evt.target);
-        let rowIdx = (parseInt(idx/gridCol)); // maybe const
+        let rowIdx = (parseInt(idx/gridCol));
         if (idx === -1) return;
         while (idx > gAVCol) {
             idx = idx - gridCol;
         }
-        let colIdx = idx; // maybe const
-        // console.log(rowIdx,colIdx)
+        let colIdx = idx;
         const plsHide = document.getElementById(`r${colIdx}c${rowIdx}`);
-        console.log(plsHide.getAttribute('class'));
         if (checkFlagged(rowIdx,colIdx)) {
-            console.log('kjebgadk');
             setHidden(rowIdx,colIdx);
-            console.log(plsHide.getAttribute('class'));
             render();
         } else if (!checkRevealed(rowIdx,colIdx)) {
-            // console.log('eufkajb');
             setFlagged(rowIdx,colIdx);
-            // console.log('contextmenu')
             render();
         }
     } else {
         render();
-        console.log('gameEnd');
     }
 }
 
@@ -409,10 +372,8 @@ function checkFlagged(row,col) {
     const cell = document.getElementById(`r${col}c${row}`)
     let revealed = cell.getAttribute('class');
     if (revealed === 'flagged') {
-        // console.log('flagged', row, col);
         return true;
     } else {
-        // console.log('not flagged', row, col);
         return false;
     } 
 }
@@ -427,15 +388,12 @@ function checkWin() {
     let boardHiddenMines = [...document.querySelectorAll('.hidden')];
     let boardFlagged = [...document.querySelectorAll('.flagged')];
     let boardHidden = boardHiddenMines.concat(boardFlagged);
-    // let userInput = document.getElementById('username');
     let count = 0;
     for (let x = 0; x < boardHidden.length; x++) {
         hiddenCell = boardHidden[x].getAttribute('id')
         let cellVal = (document.getElementById(`${hiddenCell}`)).innerText;
     }
-    // console.log(count);
     if (numMines === boardHidden.length) {
-        console.log('win');
         gameEnd = true;
         winner = true;
         endTime = Date.now();
@@ -449,47 +407,51 @@ function checkWin() {
 
 // * Scoreboard handling start
 function getUserScore() {
-    // console.log('kjbawf');
+    localStorage.removeItem('debug');
     let username = userInput.value.toUpperCase();
-    console.log(username);
-    console.log(typeof(timer));
     document.getElementById('username').value
-    // timer = parseInt(timer);
-    // userAndScore = username + ' - ' + timer;
-    // console.log(userAndScore);
-    HIGHSCORES.push([username, timer]);
+    userAndScore = [username, timer];
+    HIGHSCORES.push(userAndScore);
     userInputBtn.removeEventListener('click', getUserScore);
-    console.log('user input disabled')
     userInput.value = '';
     userInput.style.pointerEvents = 'none';
     userInput.style.color = 'var(--sub-clr)';
     userInput.style.backgroundColor = 'var(--main-clr)';
     userInput.style.textTransform = 'lowercase';
+    manageHighscores();
+}
+function manageHighscores() {
     HIGHSCORES.sort(function(a,b) {
         return a[1]-b[1]
     });
-    let scoreList = document.querySelectorAll('li');
-    console.log(scoreList.length);
-    // let scoreListItem = document.querySelector(`#${x+1}`);
-    // console.log(scoreList.innerText);
-    for (let x = 0; x < scoreList.length; x++) {
-        let scoreListItem = document.getElementById(`${x + 1}`);
-        // console.log(scoreListItem.innerText);
-        if (HIGHSCORES[x] > '000') {
-            // console.log('opt 1');
-            scoreListItem.innerText = HIGHSCORES[x][0] + ' - ' + HIGHSCORES[x][1];
-            // scoreListItem.innerText.toString().replace(',','-');
-            // scoreListItem.innerText.replace('-',',');
-            console.log(scoreListItem.innerText);
+    localStorage.removeItem('debug');
+    for (let x = 0; x < localStorage.length; x++) {
+        if (localStorage.key(x) !== null) {
+            HIGHSCORES.push([localStorage.key(x),localStorage.getItem(localStorage.key(x))]);
         } else {
-            // console.log('opt 2');
+            continue;
+        }
+    }
+    HIGHSCORES.sort(function(a,b) {
+        return a[1]-b[1]
+    });
+    localStorage.clear();
+    localStorage.removeItem('debug');
+    for (let x = 0; x < HIGHSCORES.length; x++) {
+        if (localStorage.key(x) === null) {
+            localStorage.removeItem('null');
+        }
+        localStorage.setItem(HIGHSCORES[x][0],HIGHSCORES[x][1]);
+    }
+    for (let x = 0; x < localStorage.length; x++) {
+        let scoreListItem = document.getElementById(`${x + 1}`);
+        if (localStorage.getItem(localStorage.key(x)) >= '000') {
+            scoreListItem.innerText = `${HIGHSCORES[x][0]} - ${HIGHSCORES[x][1]}`;
+        } else {
             scoreListItem.innerText = '';
         }
     }
-
 }
-
-
 // * Scoreboard handling end
 
 // * Reveal functions start
@@ -528,25 +490,18 @@ function revealAdj(row, col) {
                 setRevealed(rowCheck, colCheck);
                 checkAdjacent(rowCheck,colCheck);
             }
-            // if (withinBounds(rowCheck, colCheck) && checkFlagged(rowCheck,colCheck)) {
-            //     setFlagged(rowCheck,colCheck);
-            // }
         }
     }
 }
 function setRevealed(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
     if (cellClick.getAttribute('class') === 'flagged' && winner === false) {
-        console.log(cellClick.getAttribute('class'));
         cellClick.setAttribute('class', 'revealed');
     } else if (cellClick.getAttribute('class') === 'flagged' && winner === null) {
-        // console.log(cellClick.getAttribute('class'));
         cellClick.setAttribute('class', 'flagged');
     } else if (cellClick.getAttribute('class') !== 'flagged') {
-        // console.log(cellClick.getAttribute('class'));
         cellClick.setAttribute('class', 'revealed');
     }
-    // cellClick.setAttribute('class', 'revealed');
 }
 function setFlagged(row, col) {
     const cellClick = document.getElementById(`r${col}c${row}`)
@@ -570,12 +525,10 @@ function arraySearch(arr) {
 function render() {
     renderBoard();
     renderMessage();
-    renderControls();//! Obsolete
 }
   function renderBoard() {
     board.forEach(function(colArr, colIdx) {
         colArr.forEach(function(cellVal, rowIdx) {
-            // let shade = 'rgb(128, 128, 128)';
             const cellId = `r${rowIdx}c${colIdx}`;
             const cellEl = document.getElementById(cellId);
             if (cellEl.getAttribute('class') === 'revealed') {
@@ -586,14 +539,10 @@ function render() {
                 cellEl.innerText = `F`;
             }
             if (cellEl.getAttribute('class') === 'hidden') {
-                // cellEl.style.color = `var(--main-clr}`;
                 cellEl.innerText = ``;
             } else if (cellEl.getAttribute('class') === 'revealed') {
                 cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
             }
-            // cellEl.innerText = `${DISPLAYNUM[cellVal].toUpperCase()}`
-            renderControls(); //! Obsolete
-            // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
         });
     });
   }
@@ -604,18 +553,5 @@ function render() {
     } else {
       msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
     }
-  }
-  //
-  function renderControls() {//! Obsolete
-    // playAgainBtn.style.visibility = gameEnd ? 'visible' : 'hidden';
-    // const gameOver = document.getElementById('gameOver');
-    // console.log(gameOver);
-    if (gameEnd === true) {
-        // gameOver.innerText = `GAME OVER!`;
-      } else {
-        // gameOver.innerText = ``;
-      }
-    // gameOver.innerText = `GAME OVER!`;
-
   }
   // * Render functions end
