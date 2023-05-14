@@ -76,7 +76,7 @@ const boardEdit = document.getElementById('board');
 init();
 let boardEls = [...document.querySelectorAll('#board > div')];
 const gameOver = document.getElementById('gameOver');
-boardEdit.style.fontSize = `${60 / gridCol}vmin`;
+boardEdit.style.fontSize = `${45 / gridCol}vmin`;
 
 //*----- event listeners -----*/
 playAgainBtn.addEventListener('click', start);
@@ -103,8 +103,8 @@ function init() {
     yDir = 0;
     score = 0;
     timer = '000';
-    boardEdit.style.gridTemplateColumns = `repeat(${gridCol}, ${120 / gridCol}vmin)`;
-    boardEdit.style.gridTemplateRows = `repeat(${gridRow}, ${120 / gridCol}vmin)`;
+    boardEdit.style.gridTemplateColumns = `repeat(${gridCol}, ${90 / gridCol}vmin)`;
+    boardEdit.style.gridTemplateRows = `repeat(${gridRow}, ${90 / gridCol}vmin)`;
     makeBoard(gridRow, gridCol);
     turn = 1;
     winner = null;

@@ -68,7 +68,7 @@
     display: flex;
     background-color: var(--main-clr);
     /* grid-template-columns: 1.1fr auto 1.1fr; */
-    width: 120vmin;
+    width: 90vmin;
     justify-content: space-around;
     align-items: center;
     margin: 1vmin solid rgb(150,150,150);
@@ -84,7 +84,7 @@
   
   h1 {
     color: var(--sub-clr);
-    font-size: 4vmin;
+    font-size: 3vmin;
     display: inline grid;
     /* justify-items: start; */
     /* align-items: start; */
