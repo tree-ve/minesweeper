@@ -427,7 +427,7 @@ function manageHighscores() {
     });
     localStorage.removeItem('debug');
     console.table(HIGHSCORES);
-    for (let x = 0; x < localStorage.length; x++) {
+    for (let x = 0; (x < localStorage.length) && (x < 9); x++) {
         if (localStorage.key(x) !== null) {
             HIGHSCORES.push([localStorage.key(x),localStorage.getItem(localStorage.key(x))]);
         } else {
@@ -446,7 +446,7 @@ function manageHighscores() {
         }
         localStorage.setItem(HIGHSCORES[x][0],HIGHSCORES[x][1]);
     }
-    for (let x = 0; x < localStorage.length; x++) {
+    for (let x = 0; (x < localStorage.length) && (x < 9); x++) {
         let scoreListItem = document.getElementById(`${x + 1}`);
         if (localStorage.getItem(localStorage.key(x)) >= '000') {
             scoreListItem.innerText = `${HIGHSCORES[x][0]} - ${HIGHSCORES[x][1]}`;
