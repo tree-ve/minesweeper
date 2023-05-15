@@ -553,9 +553,9 @@ function render() {
 
   function renderMessage() {
     if (gameEnd === true && winner === false) {
-      msgEl.innerHTML = `<span style="color: var(--red})">Game Over!</span>`;
+      msgEl.innerHTML = `<span style="color: red">Game Over!</span>`;
     } else {
-      msgEl.innerHTML = `Time: <span style="color: var(--red)">${timer}</span>`;
+      msgEl.innerHTML = `Time: <span style="color: red">${timer}</span>`;
     }
   }
   // * Render functions end
