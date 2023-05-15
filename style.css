@@ -38,7 +38,7 @@
   }
 
   subheadings {
-    display: flex;
+    display: inline-flex;
     background-color: var(--main-clr);
     width: 92vmin;
     border: 1vmin solid var(--sub-clr);

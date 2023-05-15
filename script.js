@@ -45,7 +45,7 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 99;
+const numMines = 5;
 
 
 //*----- state variables -----*/
@@ -113,14 +113,14 @@ function init() {
     placeMines(numMines);
     boardAdjacentCount();
     const startTime = Date.now();
-    let timeNow = Date.now();
-    let boardEls = [...document.querySelectorAll('#board > div')];
+    timeNow = Date.now();
     userInput.value = '';
     userInput.style.pointerEvents = 'none';
     userInput.style.color = 'var(--sub-clr)';
     userInput.style.backgroundColor = 'var(--main-clr)';
     userInput.style.textTransform = 'lowercase';
     startTimer();
+    manageHighscores();
     render();
 }
 function gameRunning() {
@@ -397,6 +397,7 @@ function checkWin() {
         gameEnd = true;
         winner = true;
         endTime = Date.now();
+        userInputBtn.addEventListener('click', getUserScore);
         userInput.style.pointerEvents = 'all';
         userInput.style.color = 'var(--main-clr)';
         userInput.style.backgroundColor = 'white';
@@ -425,6 +426,7 @@ function manageHighscores() {
         return a[1]-b[1]
     });
     localStorage.removeItem('debug');
+    console.table(HIGHSCORES);
     for (let x = 0; x < localStorage.length; x++) {
         if (localStorage.key(x) !== null) {
             HIGHSCORES.push([localStorage.key(x),localStorage.getItem(localStorage.key(x))]);
@@ -435,6 +437,7 @@ function manageHighscores() {
     HIGHSCORES.sort(function(a,b) {
         return a[1]-b[1]
     });
+    console.table(HIGHSCORES);
     localStorage.clear();
     localStorage.removeItem('debug');
     for (let x = 0; x < HIGHSCORES.length; x++) {
@@ -451,6 +454,7 @@ function manageHighscores() {
             scoreListItem.innerText = '';
         }
     }
+    HIGHSCORES = [];
 }
 // * Scoreboard handling end
 
