@@ -426,7 +426,6 @@ function manageHighscores() {
         return a[1]-b[1]
     });
     localStorage.removeItem('debug');
-    console.table(HIGHSCORES);
     for (let x = 0; (x < localStorage.length) && (x < 9); x++) {
         if (localStorage.key(x) !== null) {
             HIGHSCORES.push([localStorage.key(x),localStorage.getItem(localStorage.key(x))]);
@@ -437,7 +436,6 @@ function manageHighscores() {
     HIGHSCORES.sort(function(a,b) {
         return a[1]-b[1]
     });
-    console.table(HIGHSCORES);
     localStorage.clear();
     localStorage.removeItem('debug');
     for (let x = 0; x < HIGHSCORES.length; x++) {
