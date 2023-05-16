@@ -277,6 +277,7 @@ function flag(evt) {
             render();
         } else if (!checkRevealed(rowIdx,colIdx)) {
             setFlagged(rowIdx,colIdx);
+            checkWin();
             render();
         }
     } else {
@@ -387,7 +388,7 @@ function withinBounds(row, col) {
 function checkWin() {
     let boardHiddenMines = [...document.querySelectorAll('.hidden')];
     let boardFlagged = [...document.querySelectorAll('.flagged')];
-    let boardHidden = boardHiddenMines.concat(boardFlagged);
+    let boardHidden = boardFlagged;//boardHiddenMines.concat(boardFlagged);
     let count = 0;
     for (let x = 0; x < boardHidden.length; x++) {
         hiddenCell = boardHidden[x].getAttribute('id')
