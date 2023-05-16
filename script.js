@@ -389,12 +389,12 @@ function checkWin() {
     let boardHiddenMines = [...document.querySelectorAll('.hidden')];
     let boardFlagged = [...document.querySelectorAll('.flagged')];
     let boardHidden = boardFlagged;//boardHiddenMines.concat(boardFlagged);
-    let count = 0;
+    // let count = 0;
     for (let x = 0; x < boardHidden.length; x++) {
         hiddenCell = boardHidden[x].getAttribute('id')
         let cellVal = (document.getElementById(`${hiddenCell}`)).innerText;
     }
-    if (numMines === boardHidden.length) {
+    if (numMines === boardHidden.length && boardHiddenMines.length === 0) {
         gameEnd = true;
         winner = true;
         endTime = Date.now();
