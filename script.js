@@ -45,7 +45,7 @@ const gAVCol = (gridCol - 1);
 const gAVRow = (gridRow - 1);
 
 const split = 4;
-const numMines = 5;
+const numMines = 99;
 
 
 //*----- state variables -----*/
